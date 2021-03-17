@@ -1,0 +1,22 @@
+BODY {
+    font-family: Consolas, serif;
+}
+TABLE {
+    border-collapse: collapse; /* Убираем двойные линии между ячейками */
+}
+TH {
+    background: #6eb441; /* Цвет фона ячейки */
+    text-align: left; /* Выравнивание по левому краю */
+    color: white;
+}
+TD {
+    background: #fff; /* Цвет фона ячеек */
+    text-align: left; /* Выравнивание по центру */
+}
+TH, TD {
+    border: 2px solid #ffffff; /* Параметры рамки */
+    padding: 4px; /* Поля вокруг текста */
+}
+FORM {
+    display: inline;
+}
