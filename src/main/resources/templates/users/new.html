@@ -21,6 +21,14 @@
         <input type="text" id="email" th:field="*{email}"/>
     </p>
     <p>
+        <label for="role">Enter role:</label>
+        <select multiple size="2" id="role" th:field="*{roles}">
+            <option th:each="role : ${_roles}"
+                    th:text="${role.name}"
+                    th:value="${role.id}"></option>
+        </select>
+    </p>
+    <p>
         <input type="submit" value="Save"/>
     </p>
 </form>
