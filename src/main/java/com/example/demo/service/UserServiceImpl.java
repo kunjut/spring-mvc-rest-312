@@ -4,22 +4,22 @@ import com.example.demo.dao.UserDAO;
 import com.example.demo.models.Role;
 import com.example.demo.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl
+        implements UserService, UserDetailsService {
     @Autowired
-    UserDAO userDAO;
-    @Autowired
-    UserDetailsServiceImpl userDetailsServiceImpl;
-    @Autowired
-    private PasswordEncoder bCryptPasswordEncoder;
+    private UserDAO userDAO;
 
     @Override
     public List<User> index() {
@@ -33,16 +33,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
-        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-
         userDAO.save(user);
     }
 
     @Override
     public void update(Long id, User updatedUser) {
-        updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
-
         userDAO.update(id, updatedUser);
     }
 
@@ -54,5 +49,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByName(String username) {
         return userDAO.getUserByName(username);
+    }
+
+    // «Пользователь» – это просто Object.
+    // В большинстве случаев он может быть приведен к классу UserDetails.
+    // Для создания UserDetails используется интерфейс UserDetailsService, с единственным методом:
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        User user = userDAO.getUserByName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+                user.getPassword(),
+                mapRolesToAuthorities(user.getRoles()));
+    }
+
+    //Из коллекции ролей делаем коллекцию Authorities
+    public Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles.stream()
+                .map(r -> new SimpleGrantedAuthority(r.getName()))
+                .collect(Collectors.toList());
     }
 }
