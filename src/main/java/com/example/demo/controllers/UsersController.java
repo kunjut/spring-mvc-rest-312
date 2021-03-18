@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.models.User;
+import com.example.demo.service.RoleService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,8 +15,14 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/")
 public class UsersController {
+
+    private final UserService userService;
+    private final RoleService roleService;
     @Autowired
-    private UserService userService;
+    public UsersController(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
 
     @GetMapping("/admin")
     public String index(Model model) {
@@ -35,7 +42,8 @@ public class UsersController {
     }
 
     @GetMapping("admin/new")
-    public String newUser(@ModelAttribute("user") User user) {
+    public String newUser(@ModelAttribute("user") User user, Model model) {
+        model.addAttribute("_roles", roleService.getAllRoles());
 
         return "users/new";
     }
