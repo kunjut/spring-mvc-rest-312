@@ -5,11 +5,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "users_242")
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,22 +23,24 @@ public class User implements UserDetails {
     private String email;
 
     @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(name = "user_roles",
+//    @JoinTable(name = "users_roles",
 //            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+//            inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    private Collection<Role> roles;
 
     public User() {
     }
 
-    public User(Long id, String username, String password, String email, Set<Role> roles) {
+    public User(Long id, String username, String password, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.roles = roles;
     }
 
+    /**
+     *  getters, setters, basic overrides
+     */
     public Long getId() {
         return id;
     }
@@ -49,7 +49,6 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    @Override
     public String getUsername() {
         return username;
     }
@@ -58,7 +57,6 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    @Override
     public String getPassword() {
         return password;
     }
@@ -75,11 +73,11 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public Set<Role> getRoles() {
+    public Collection<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Collection<Role> roles) {
         this.roles = roles;
     }
 
@@ -91,22 +89,6 @@ public class User implements UserDetails {
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id.equals(user.id) &&
-                username.equals(user.username) &&
-                password.equals(user.password) &&
-                email.equals(user.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, password, email);
     }
 
     @Override
