@@ -19,7 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    @Qualifier("userDetailsServiceImpl") // раньше не требовалось
+    @Qualifier("userDetailsServiceImpl")
     UserDetailsService userDetailsService;
 
     @Override
