@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>All users</title>
-    <link href="/static/css/main.css" rel="stylesheet" />
+    <link href="/css/main.css" rel="stylesheet" />
 </head>
 <body>
 <h1>Hello Admin!</h1>
@@ -35,7 +35,7 @@
                 <form th:method="GET" th:action="@{/admin/{id}/edit(id=${user.getId()})}">
                     <input type="submit" value="Edit">
                 </form>
-                <form th:method="DELETE" th:action="@{/admin/{id}(id=${user.getId()})}">
+                <form th:method="DELETE" th:action="@{/admin/delete/{id}(id=${user.getId()})}">
                     <input type="submit" value="Delete">
                 </form>
             </td>

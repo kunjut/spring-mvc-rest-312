@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit user</title>
-    <link href="/static/css/main.css" rel="stylesheet" />
+    <link href="/css/main.css" rel="stylesheet" />
 </head>
 <body>
 <h1>Edit user</h1>
-<form th:method="PATCH" th:action="@{/admin/{id}(id=${user.getId()})}" th:object="${user}">
+<form th:method="PATCH" th:action="@{/admin/edit/{id}(id=${user.getId()})}" th:object="${user}">
     <p>
         <label for="username">Enter username:</label>
         <input type="text" id="username" th:field="*{username}"/>
