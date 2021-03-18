@@ -35,7 +35,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional
     public void save(User user) {
-        user.setRoles(Collections.singleton(new Role(2L, "ROLE_USER")));
+//        user.setRoles(Collections.singleton(new Role(2L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         entityManager.persist(user);
     }
