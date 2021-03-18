@@ -24,7 +24,7 @@
         <label for="role">Enter role:</label>
         <select multiple size="2" id="role" th:field="*{roles}">
             <option th:each="role : ${_roles}"
-                    th:text="${role.name}"
+                    th:text="${role.name.substring(5)}"
                     th:value="${role.id}"></option>
         </select>
     </p>
