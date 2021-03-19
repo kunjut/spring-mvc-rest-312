@@ -16,4 +16,6 @@ public interface UserDAO {
     void delete(Long id);
 
     User getUserByName(String username);
+
+    User getUserByEmail(String email);
 }

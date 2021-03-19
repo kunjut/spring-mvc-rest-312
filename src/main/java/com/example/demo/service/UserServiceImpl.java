@@ -51,16 +51,21 @@ public class UserServiceImpl
         return userDAO.getUserByName(username);
     }
 
+    @Override
+    public User getUserByEmail(String email) {
+        return userDAO.getUserByEmail(email);
+    }
+
     // «Пользователь» – это просто Object.
     // В большинстве случаев он может быть приведен к классу UserDetails.
     // Для создания UserDetails используется интерфейс UserDetailsService, с единственным методом:
     @Override
-    public UserDetails loadUserByUsername(String username) {
-        User user = userDAO.getUserByName(username);
+    public UserDetails loadUserByUsername(String email) {
+        User user = getUserByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
+            throw new UsernameNotFoundException(String.format("User '%s' not found", email));
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+        return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));
     }

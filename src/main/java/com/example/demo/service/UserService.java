@@ -20,4 +20,6 @@ public interface UserService extends UserDetailsService {
     User getUserByName(String username);
 
     UserDetails loadUserByUsername(String username);
+
+    User getUserByEmail(String email);
 }
