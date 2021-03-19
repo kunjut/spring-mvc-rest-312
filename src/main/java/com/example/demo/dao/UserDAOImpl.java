@@ -43,8 +43,15 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional
     public void update(Long id, User updatedUser) {
-        updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
-        entityManager.merge(updatedUser);
+        User userFromDB = entityManager.find(User.class, updatedUser.getId());
+        userFromDB.setUsername(updatedUser.getUsername());
+        userFromDB.setEmail(updatedUser.getEmail());
+        userFromDB.setRoles(updatedUser.getRoles());
+        if (!updatedUser.getPassword().isEmpty()) {
+            userFromDB.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+        }
+//        updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+//        entityManager.merge(updatedUser);
     }
 
     @Override
@@ -57,6 +64,13 @@ public class UserDAOImpl implements UserDAO {
     public User getUserByName(String username) {
         return entityManager.createQuery("select u from User u where u.username=:username", User.class)
                 .setParameter("username", username)
+                .getSingleResult();
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return entityManager.createQuery("select u from User u where u.email=:email", User.class)
+                .setParameter("email", email)
                 .getSingleResult();
     }
 }
