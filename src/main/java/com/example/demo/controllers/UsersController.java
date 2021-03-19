@@ -36,7 +36,7 @@ public class UsersController {
         // из DAO получаем одного user по id, пакуем в модель
         model.addAttribute("user", userService.show(id));
 
-        printForMePrincipal(principal, authentication);
+//        printForMePrincipal(principal, authentication);
 
         return "users/show";
     }
@@ -58,6 +58,7 @@ public class UsersController {
     @GetMapping("admin/{id}/edit")
     public String edit(@PathVariable Long id, Model model) {
         model.addAttribute("user", userService.show(id));
+        model.addAttribute("_roles", roleService.getAllRoles());
 
         return "users/edit";
     }
@@ -80,9 +81,10 @@ public class UsersController {
 
     @GetMapping("/user")
     public String printIfUser(ModelMap model, Principal principal, Authentication authentication) {
-        model.addAttribute("user", userService.getUserByName(principal.getName()));
+//        model.addAttribute("user", userService.getUserByName(principal.getName()));
+        model.addAttribute("user", userService.getUserByEmail(principal.getName()));
 
-        printForMePrincipal(principal, authentication);
+//        printForMePrincipal(principal, authentication);
 
         return "users/show";
     }
@@ -93,11 +95,11 @@ public class UsersController {
         return "pages/login";
     }
 
-    public void printForMePrincipal(Principal principal, Authentication authentication) {
-        System.out.println(principal);
-        System.out.println(userService.getUserByName(principal.getName()));
-        System.out.println(userService.getUserByName(principal.getName()).getRoles());
-        System.out.println(authentication.getName());
-        System.out.println(authentication.getAuthorities());
-    }
+//    public void printForMePrincipal(Principal principal, Authentication authentication) {
+//        System.out.println(principal);
+//        System.out.println(userService.getUserByName(principal.getName()));
+//        System.out.println(userService.getUserByName(principal.getName()).getRoles());
+//        System.out.println(authentication.getName());
+//        System.out.println(authentication.getAuthorities());
+//    }
 }
