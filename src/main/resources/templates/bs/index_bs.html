@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <html lang="en">
 <head>
     <!-- Required meta tags -->
@@ -14,30 +14,49 @@
     <title>Admin panel</title>
 
     <script type="text/javascript">
-        $('document').ready(function () {
+        $(document).ready(function () {
             $('.table .eBtn').on('click', function (event) {
                 event.preventDefault();
                 var href = $(this).attr('href');
 
                 $.get(href, function (user, status) {
+                    $('.myForm #id_edit').val(user.id);
                     $('.myForm #username_edit').val(user.username);
+                    $('.myForm #password_edit').val();
+                    $('.myForm #email_edit').val(user.email);
+                    $('.myForm #role_edit').val(user.roles);
                 });
                 $('.myForm #exampleModal').modal();
             })
         });
     </script>
+    <script type="text/javascript">
+        $('document').ready(function () {
+            $('.table .dBtn').on('click', function (event) {
+                event.preventDefault();
+                var href = $(this).attr('href');
+
+                $.get(href, function (user, status) {
+                    $('.deleteForm #id_delete').val(user.id);
+                    $('.deleteForm #username_delete').val(user.username);
+                    // $('.deleteForm #password_delete').val();
+                    $('.deleteForm #email_delete').val(user.email);
+                    $('.deleteForm #role_delete').val(user.roles);
+                });
+                $('.deleteForm #deleteModal').modal();
+            })
+        });
+    </script>
 
 </head>
+
 <body>
-
-
-
 <!-- Навбар -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <span class="navbar-brand" th:text="${users[1].getEmail()} + ' with roles:'">
+            <span class="navbar-brand" th:text="${principal.getEmail()} + ' with roles:'">
                 Principal email</span>
     <span class="navbar-brand"
-          th:each="role : ${users[1].getRoles()}" th:text="${role.getName().substring(5)}">
+          th:each="role : ${principal.getRoles()}" th:text="${role.getName().substring(5)}">
                 Principal roles</span>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
@@ -47,15 +66,13 @@
 
     <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto"></ul>
-        <span class="navbar-nav nav-item">
-                    <a class="nav-link" th:href="@{/logout}">Logout</a>
-                </span>
+        <span class="navbar-nav nav-item"><a class="nav-link" th:href="@{/logout}">Logout</a></span>
     </div>
 </nav>
 <!-- / Навбар -->
 
 <!-- Modal Edit user-->
-<form class="myForm" th:method="PATCH" th:action="@{/admin/edit/{id}(id=${user.getId()})}" th:object="${user}">
+<form class="myForm" th:method="PATCH" th:action="@{/admin/edit}" th:object="${user}">
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
 
@@ -71,38 +88,90 @@
 
                     <!-- Здесь было начало формы -->
                     <p>
+                        <label for="id_edit">Id:</label>
+                        <input type="text" id="id_edit" class="form-control" th:field="*{id}" readonly/>
+                    </p>
+                    <p>
                         <label for="username_edit">Enter username:</label>
-                        <input type="text" id="username_edit" th:field="*{username}"/>
+                        <input type="text" id="username_edit" class="form-control" th:field="*{username}"/>
                     </p>
                     <p>
                         <label for="password_edit">Enter password:</label>
-                        <input type="password" id="password_edit" th:field="*{password}"/>
+                        <input type="password" id="password_edit" class="form-control" th:field="*{password}"/>
                     </p>
                     <p>
                         <label for="email_edit">Enter email:</label>
-                        <input type="text" id="email_edit" th:field="*{email}"/>
+                        <input type="text" id="email_edit" class="form-control" th:field="*{email}"/>
                     </p>
                     <p>
                         <label for="role_edit">Enter role:</label>
-                        <select multiple size="2" id="role_edit" th:field="*{roles}">
+                        <select multiple size="2" id="role_edit" class="form-control" th:field="*{roles}">
                             <option th:each="role : ${_roles}"
-                                    th:text="${role.name.substring(5)}"
-                                    th:value="${role.id}"></option>
+                                    th:text="${role.getName().substring(5)}"
+                                    th:value="${role.getId()}"></option>
                         </select>
                     </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <input type="submit" class="btn btn-primary" value="Save changes"/>
                 </div>
             </div>
         </div>
-
-</div>
+    </div>
 </form>
-
 <!-- / Modal Edit user-->
 
+<!-- Modal Delete user-->
+<form class="deleteForm" th:method="DELETE" th:action="@{/admin/delete}" th:object="${user}">
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete user</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Здесь было начало формы -->
+                    <p>
+                        <label for="id_delete">Id:</label>
+                        <input type="text" id="id_delete" class="form-control" th:field="*{id}" readonly/>
+                    </p>
+                    <p>
+                        <label for="username_delete">Username:</label>
+                        <input type="text" id="username_delete" class="form-control" th:field="*{username}" readonly/>
+                    </p>
+                    <p>
+                        <label for="email_delete">Email:</label>
+                        <input type="text" id="email_delete" class="form-control" th:field="*{email}" readonly/>
+                    </p>
+                    <p>
+                        <label for="role_delete">Roles:</label>
+                        <select multiple size="2" id="role_delete" class="form-control" th:field="*{roles}" readonly>
+                            <option th:each="role : ${_roles}"
+                                    th:text="${role.name.substring(5)}"
+                                    th:value="${role.id}">
+                            </option>
+                        </select>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-danger" value="Accept delete"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- / Modal Delete user-->
+
+
+<!-- Основной контейнер-->
 <div class="container-fluid d-flex flex-column">
     <div class="row flex-fill d-flex h-100 justify-content-start">
 
@@ -173,31 +242,26 @@
                                         </span>
                                             </td>
                                             <td>
-                                                <form th:method="GET"
-                                                      th:action="@{/admin/{id}/edit(id=${user.getId()})}">
-                                                    <input type="submit" value="Edit" class="btn btn-info">
-                                                </form>
+<!--                                                Рабочий вариант edit/delete без модального-->
+<!--                                                <form th:method="GET"-->
+<!--                                                      th:action="@{/admin/{id}/edit(id=${user.getId()})}">-->
+<!--                                                    <input type="submit" value="Edit_" class="btn btn-info">-->
+<!--                                                </form>-->
+<!--                                                <form th:method="DELETE"-->
+<!--                                                      th:action="@{/admin/delete/{id}(id=${user.getId()})}">-->
+<!--                                                    <input type="submit" value="Delete_" class="btn btn-danger">-->
+<!--                                                </form>-->
 
-                                                <!-- <form th:method="GET"-->
-                                                <!-- th:action="@{/admin/{id}/edit(id=${user.getId()})}">-->
                                                 <a th:href="@{/findOne/{id}/(id=${user.getId()})}"
-                                                   class="btn btn-warning eBtn">EditT</a>
-                                                <!-- </form>-->
-                                                <!-- <form th:method="DELETE"-->
-                                                <!-- th:action="@{/admin/delete/{id}(id=${user.getId()})}">-->
-                                                <!-- <input type="submit" value="Delete" class="btn btn-danger">-->
-                                                <!-- </form>-->
+                                                   class="btn btn-info eBtn">Edit</a>
 
-                                                <!-- Button trigger modal -->
-                                                <!-- <button type="button" class="btn btn-primary" data-toggle="modal"-->
-                                                <!-- data-target="#exampleModal" id="test"-->
-                                                <!-- th:method="GET"-->
-                                                <!-- th:action="@{/findOne/{id}/(id=${user.getId()})}">Edit2-->
-                                                <!-- </button>-->
+                                                <a th:href="@{/findOne/{id}/(id=${user.getId()})}"
+                                                   class="btn btn-danger dBtn">Delete</a>
 
-                                                <form th:method="GET" th:action="@{/findOne/{id}/(id=${user.getId()})}">
-                                                    <input type="submit" value="findOne"/>
-                                                </form>
+<!--                                                Проверка получения данных-->
+<!--                                                <a th:href="@{/findOne/{id}/(id=${user.getId()})}"-->
+<!--                                                   class="btn btn-warning">findOne</a>-->
+
                                             </td>
                                         </tr>
                                         </tbody>
@@ -277,7 +341,7 @@
                                     <th>Password</th>
                                     <th>Email</th>
                                     <th>Role</th>
-                                    <th>Operations</th>
+<!--                                    <th>Operations</th>-->
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -293,16 +357,6 @@
                                               th:text="${role.getName().substring(5)} + ' '">
 
                                         </span>
-                                    </td>
-                                    <td>
-                                        <form th:method="GET"
-                                              th:action="@{/admin/{id}/edit(id=${principal.getId()})}">
-                                            <input type="submit" value="Edit" class="btn btn-info">
-                                        </form>
-                                        <form th:method="DELETE"
-                                              th:action="@{/admin/delete/{id}(id=${principal.getId()})}">
-                                            <input type="submit" value="Delete" class="btn btn-danger">
-                                        </form>
                                     </td>
                                 </tr>
                                 </tbody>

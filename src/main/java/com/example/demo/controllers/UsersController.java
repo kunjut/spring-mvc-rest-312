@@ -1,7 +1,6 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dao.UserDaoJPA;
-import com.example.demo.models.Role;
 import com.example.demo.models.User;
 import com.example.demo.service.RoleService;
 import com.example.demo.service.UserService;
@@ -14,7 +13,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 @Controller
 @RequestMapping("/")
@@ -30,19 +28,17 @@ public class UsersController {
         this.userDaoJPA = userDaoJPA;
     }
 
-    @GetMapping("/admin")
-    public String index(Model model) {
-        // из DAO получаем всех user, пакуем в модель
-        model.addAttribute("users", userService.index());
-        return "users/index";
-    }
+//    @GetMapping("/admin")
+//    public String index(Model model) {
+//        // из DAO получаем всех user, пакуем в модель
+//        model.addAttribute("users", userService.index());
+//        return "users/index";
+//    }
 
     @GetMapping("/admin/{id}")
-    public String show(@PathVariable("id") Long id, Model model, Principal principal, Authentication authentication) {
+    public String show(@PathVariable("id") Long id, Model model) {
         // из DAO получаем одного user по id, пакуем в модель
         model.addAttribute("user", userService.show(id));
-
-//        printForMePrincipal(principal, authentication);
 
         return "users/show";
     }
@@ -67,13 +63,19 @@ public class UsersController {
         model.addAttribute("_roles", roleService.getAllRoles());
 
         return "users/edit";
-//        return "pages/test_bs";
     }
 
 //    @PatchMapping("/admin/{id}") при переезде на boot перестал работать
     @PostMapping("/admin/edit/{id}")
-    public String update(@PathVariable("id") Long id, User user) {
-        userService.update(id, user);
+    public String update(User user) { //, @PathVariable("id") Long id) {
+        userService.update(user);
+
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/edit")
+    public String updateViaModal(User user) {
+        userService.update(user);
 
         return "redirect:/admin";
     }
@@ -86,14 +88,19 @@ public class UsersController {
         return "redirect:/admin";
     }
 
+    @PostMapping("/admin/delete")
+    public String deleteViaModal(User user) {
+        userService.delete(user.getId());
+
+        return "redirect:/admin";
+    }
+
     @GetMapping("/user")
     public String printIfUser(ModelMap model, Principal principal, Authentication authentication) {
 //        model.addAttribute("user", userService.getUserByName(principal.getName()));
-        model.addAttribute("user", userService.getUserByEmail(principal.getName()));
+        model.addAttribute("principal", userService.getUserByEmail(principal.getName()));
 
-//        printForMePrincipal(principal, authentication);
-
-        return "users/show";
+        return "bs/show_bs";
     }
 
     @GetMapping("/login")
@@ -102,20 +109,20 @@ public class UsersController {
         return "pages/login";
     }
 
-    @GetMapping("/admin/test_bs")
+    @GetMapping("/admin")
     public String testBS(Model model, Principal principal, @ModelAttribute("user") User user) {
         model.addAttribute("users", userService.index());
         model.addAttribute("principal", userService.getUserByEmail(principal.getName()));
         model.addAttribute("_roles", roleService.getAllRoles());
         model.addAttribute("jpa_roles", userDaoJPA.findAll());
 
-        return "pages/test_bs";
+        return "bs/index_bs";
     }
 
     @GetMapping("/findOne/{id}")
     @ResponseBody
     public UserDetails findOne(@PathVariable("id") Long id) {
-//        return userDaoJPA.findAll();
+
         return userService.show(id);
     }
 

@@ -1,6 +1,5 @@
 package com.example.demo.dao;
 
-import com.example.demo.models.Role;
 import com.example.demo.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -42,15 +40,21 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     @Transactional
-    public void update(Long id, User updatedUser) {
-        User userFromDB = entityManager.find(User.class, id);
+    public void update(User updatedUser) {
+        User userFromDB = show(updatedUser.getId());
         userFromDB.setUsername(updatedUser.getUsername());
         userFromDB.setEmail(updatedUser.getEmail());
-        userFromDB.setRoles(updatedUser.getRoles());
+
         if (!updatedUser.getPassword().isEmpty()) {
             userFromDB.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
         }
+//        userFromDB.setRoles(updatedUser.getRoles());
+
+        if (!updatedUser.getRoles().isEmpty()) {
+            userFromDB.setRoles(updatedUser.getRoles());
+        }
 //        updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
+
 //        entityManager.merge(updatedUser);
     }
 
