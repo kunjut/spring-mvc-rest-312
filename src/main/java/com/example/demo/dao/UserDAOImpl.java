@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.models.User;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -33,7 +34,6 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional
     public void save(User user) {
-//        user.setRoles(Collections.singleton(new Role(2L, "ROLE_USER")));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         entityManager.persist(user);
     }
@@ -48,12 +48,10 @@ public class UserDAOImpl implements UserDAO {
         if (!updatedUser.getPassword().isEmpty()) {
             userFromDB.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
         }
-//        userFromDB.setRoles(updatedUser.getRoles());
 
         if (!updatedUser.getRoles().isEmpty()) {
             userFromDB.setRoles(updatedUser.getRoles());
         }
-//        updatedUser.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
 
 //        entityManager.merge(updatedUser);
     }
