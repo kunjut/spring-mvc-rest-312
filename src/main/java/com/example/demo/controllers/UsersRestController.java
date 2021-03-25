@@ -1,8 +1,12 @@
 package com.example.demo.controllers;
 
+import com.example.demo.dao.RoleDaoJPA;
+import com.example.demo.dao.UserDaoJPA;
 import com.example.demo.models.User;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +16,8 @@ import java.util.List;
 public class UsersRestController {
     @Autowired
     UserService userService;
+    @Autowired
+    UserDaoJPA userDaoJPA;
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
@@ -29,15 +35,14 @@ public class UsersRestController {
         return user;
     }
 
-    @PatchMapping("/users")
-    public User updateUser(@RequestBody User user) {
+    @PutMapping("/users/{id}")
+    public void updateUser(@RequestBody User user) {
         userService.update(user);
-        return user;
+//        return user;
     }
 
     @DeleteMapping("/users/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable Long id) {
         userService.delete(id);
-        return "User with id="+id+" was deleted from DB";
     }
 }

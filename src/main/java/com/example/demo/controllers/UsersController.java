@@ -1,6 +1,6 @@
 package com.example.demo.controllers;
 
-import com.example.demo.dao.UserDaoJPA;
+import com.example.demo.dao.RoleDaoJPA;
 import com.example.demo.models.User;
 import com.example.demo.service.RoleService;
 import com.example.demo.service.UserService;
@@ -15,18 +15,19 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/xxxxxxxxxxxxxxxxxxx")
 public class UsersController {
 
     private final UserService userService;
     private final RoleService roleService;
-    private final UserDaoJPA userDaoJPA;
+    private final RoleDaoJPA roleDaoJPA;
     @Autowired
-    public UsersController(UserService userService, RoleService roleService, UserDaoJPA userDaoJPA) {
+    public UsersController(UserService userService, RoleService roleService, RoleDaoJPA roleDaoJPA) {
         this.userService = userService;
         this.roleService = roleService;
-        this.userDaoJPA = userDaoJPA;
+        this.roleDaoJPA = roleDaoJPA;
     }
+
 
 //    @GetMapping("/admin")
 //    public String index(Model model) {
@@ -57,28 +58,28 @@ public class UsersController {
         return "redirect:/admin";
     }
 
-    @GetMapping("admin/{id}/edit")
-    public String edit(@PathVariable Long id, Model model) {
-        model.addAttribute("user", userService.show(id));
-        model.addAttribute("_roles", roleService.getAllRoles());
-
-        return "users/edit";
-    }
+//    @GetMapping("admin/{id}/edit")
+//    public String edit(@PathVariable Long id, Model model) {
+//        model.addAttribute("user", userService.show(id));
+//        model.addAttribute("_roles", roleService.getAllRoles());
+//
+//        return "users/edit";
+//    }
 
 //    @PatchMapping("/admin/{id}") при переезде на boot перестал работать
-    @PostMapping("/admin/edit/{id}")
-    public String update(User user) { //, @PathVariable("id") Long id) {
-        userService.update(user);
+//    @PostMapping("/admin/edit/{id}")
+//    public String update(User user) { //, @PathVariable("id") Long id) {
+//        userService.update(user);
+//
+//        return "redirect:/admin";
+//    }
 
-        return "redirect:/admin";
-    }
-
-    @PostMapping("/admin/edit")
-    public String updateViaModal(User user) {
-        userService.update(user);
-
-        return "redirect:/admin";
-    }
+//    @PostMapping("/admin/edit")
+//    public String updateViaModal(User user) {
+//        userService.update(user);
+//
+//        return "redirect:/admin";
+//    }
 
 //    @DeleteMapping("/admin/{id}") при переезде на boot перестал работать
     @PostMapping("/admin/delete/{id}")
@@ -95,29 +96,30 @@ public class UsersController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/user")
-    public String printIfUser(ModelMap model, Principal principal, Authentication authentication) {
-//        model.addAttribute("user", userService.getUserByName(principal.getName()));
-        model.addAttribute("principal", userService.getUserByEmail(principal.getName()));
+//    @GetMapping("/user")
+//    public String printIfUser(ModelMap model, Principal principal, Authentication authentication) {
+////        model.addAttribute("user", userService.getUserByName(principal.getName()));
+//        model.addAttribute("principal", userService.getUserByEmail(principal.getName()));
+//
+//        return "bs/show_bs";
+//    }
+//
+//    @GetMapping("/login")
+//    public String loginPage() {
+//
+//        return "pages/login";
+//    }
 
-        return "bs/show_bs";
-    }
-
-    @GetMapping("/login")
-    public String loginPage() {
-
-        return "pages/login";
-    }
-
-    @GetMapping("/admin")
-    public String testBS(Model model, Principal principal, @ModelAttribute("user") User user) {
-        model.addAttribute("users", userService.index());
-        model.addAttribute("principal", userService.getUserByEmail(principal.getName()));
-        model.addAttribute("_roles", roleService.getAllRoles());
-        model.addAttribute("jpa_roles", userDaoJPA.findAll());
-
-        return "bs/index_bs";
-    }
+//    @GetMapping("/admin")
+//    public String testBS(Model model, Principal principal, @ModelAttribute("user") User user) {
+//        model.addAttribute("users", userService.index());
+//        model.addAttribute("principal", userService.getUserByEmail(principal.getName()));
+//        model.addAttribute("_roles", roleService.getAllRoles());
+//        model.addAttribute("jpa_roles", roleDaoJPA.findAll());
+//
+////        return "bs/index_bs";
+//        return "bs/test";
+//    }
 
     @GetMapping("/findOne/{id}")
     @ResponseBody

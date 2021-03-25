@@ -17,6 +17,9 @@ public class UserDAOImpl implements UserDAO {
     private EntityManager entityManager;
 
     @Autowired
+    UserDaoJPA userDaoJPA;
+
+    @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
 
     @Override
@@ -29,6 +32,8 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User show(Long id) {
         return entityManager.find(User.class, id);
+//        return entityManager.createQuery("select u from User u where u.id=:id", User.class)
+//            .setParameter("id", id).getSingleResult();
     }
 
     @Override
@@ -49,9 +54,9 @@ public class UserDAOImpl implements UserDAO {
             userFromDB.setPassword(bCryptPasswordEncoder.encode(updatedUser.getPassword()));
         }
 
-        if (!updatedUser.getRoles().isEmpty()) {
-            userFromDB.setRoles(updatedUser.getRoles());
-        }
+//        if (!updatedUser.getRoles().isEmpty()) {
+//            userFromDB.setRoles(updatedUser.getRoles());
+//        }
 
 //        entityManager.merge(updatedUser);
     }
