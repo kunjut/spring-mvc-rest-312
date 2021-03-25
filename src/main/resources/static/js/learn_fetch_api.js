@@ -4,8 +4,28 @@ const addPostForm = document.querySelector('.add-post-form');
 const usernameValue = document.getElementById('usernameValue');
 const emailValue = document.getElementById('emailValue');
 const passwordValue = document.getElementById('passwordValue');
+const rolesValue = document.getElementById('rolesValue');
 
-const btnSubmit = document.querySelector('.btn')
+const btnEdit = document.querySelector('.btnEdit')
+
+function whatSelected() {
+    let select1 = document.getElementById("rolesValue");
+    let selectedArr = [];
+
+    for (let i = 0; i < select1.length; i++) {
+        if (select1.options[i].selected) {
+            let selectedHsh = {};
+            selectedHsh['id']= +select1.options[i].value;
+            selectedHsh['name']=select1.options[i].id;
+            selectedArr.push(selectedHsh);
+        }
+    }
+    return selectedArr;
+}
+
+rolesValue.addEventListener('click', (e) => {
+    whatSelected();
+})
 
 let output = '';
 
@@ -29,8 +49,8 @@ const renderUsers = (users) => {
                         <p class="card-password">${user.password}</p>
                         <p class="card-id">${user.id}</p>
                         <p class="card-roles">${_roles_}</p>
-                        <a href="#" class="card-link" id="edit-post">Edit</a>
-                        <a href="#" class="card-link" id="delete-post">Delete</a>
+                        <a href= "edit/${user.id}" class="card-link" id="edit-post">Edit</a>
+                        <a href="delete/${user.id}" class="card-link" id="delete-post">Delete</a>
                     </div>
                  </div>  
             `;
@@ -58,7 +78,7 @@ addPostForm.addEventListener('submit', (e) => {
             username: usernameValue.value,
             password: passwordValue.value,
             email: emailValue.value,
-            roles: [{id: 1, name: 'ROLE_ADMIN'}, {id: 2, name: 'ROLE_USER'}]
+            roles: whatSelected()
         })
     })
         .then(res => res.json())
@@ -68,9 +88,11 @@ addPostForm.addEventListener('submit', (e) => {
 
           renderUsers(dataArr);
         })
+    // console.log(whatSelected());
     usernameValue.value = ''; // reset fields after submit
     passwordValue.value = '';
     emailValue.value = '';
+    rolesValue.value = '';
 })
 
 
@@ -86,26 +108,22 @@ postsList.addEventListener('click', (e) => {
     // реализация удаления
     if(deleteButtonIsPressed) {
         fetch(`${url}/${id}`, { method: 'DELETE' })
-            // .then(res => res.json()) //- ругается, попробовать ключить, когда json проавильный будет собираться
+            // .then(res => res.json()) //- ругается, попробовать включить, когда json будет собираться с ролями
             .then(() => location.reload())
     }
 
     // реализация редактирования ч1 - здесь подтягиваются данные в форму
     if (editButtonIsPressed) {
-
         const parent = e.target.parentElement;
         let usernameElement = parent.querySelector('.card-username').textContent;
-        let passwordElement = parent.querySelector('.card-password').textContent;
         let emailElement = parent.querySelector('.card-email').textContent;
 
-
         usernameValue.value = usernameElement;
-        passwordValue.value = passwordElement;
         emailValue.value = emailElement;
     }
 
     // реализация редактирования ч2 - здесь отправка запроса
-    btnSubmit.addEventListener('click', () => {
+    btnEdit.addEventListener('click', () => {
 
         fetch(`${url}/${id}`, {
             method: 'PUT',
@@ -117,13 +135,13 @@ postsList.addEventListener('click', (e) => {
                 username: usernameValue.value,
                 password: passwordValue.value,
                 email: emailValue.value,
-                roles: [{id: 1, name: 'ROLE_ADMIN'}, {id: 2, name: 'ROLE_USER'}]
+                roles: whatSelected()
             })
         })
-            .then(res => res.json())
-            .then(data => console.log(data))
-            // .then(() => location.reload())
-        // console.log(id);
+            // .then(res => res.json())
+            // .then(data => console.log(data))
+            .then(() => location.reload())
+        console.log(id);
+        console.log(whatSelected());
     })
-
 });
