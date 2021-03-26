@@ -9,14 +9,14 @@ const rolesValue = document.getElementById('rolesValue');
 const btnEdit = document.querySelector('.btnEdit')
 
 function whatSelected() {
-    let select1 = document.getElementById("rolesValue");
+    let select1 = rolesValue;
     let selectedArr = [];
 
     for (let i = 0; i < select1.length; i++) {
         if (select1.options[i].selected) {
             let selectedHsh = {};
-            selectedHsh['id']= +select1.options[i].value;
-            selectedHsh['name']=select1.options[i].id;
+            selectedHsh['id'] = +select1.options[i].value;
+            selectedHsh['name'] = select1.options[i].id;
             selectedArr.push(selectedHsh);
         }
     }
@@ -83,10 +83,10 @@ addPostForm.addEventListener('submit', (e) => {
     })
         .then(res => res.json())
         .then(data => {
-          const dataArr = [];
-          dataArr.push(data);
+            const dataArr = [];
+            dataArr.push(data);
 
-          renderUsers(dataArr);
+            renderUsers(dataArr);
         })
     // console.log(whatSelected());
     usernameValue.value = ''; // reset fields after submit
@@ -107,7 +107,9 @@ postsList.addEventListener('click', (e) => {
 
     // реализация удаления
     if(deleteButtonIsPressed) {
-        fetch(`${url}/${id}`, { method: 'DELETE' })
+        fetch(`${url}/${id}`, {
+            method: 'DELETE',
+        })
             // .then(res => res.json()) //- ругается, попробовать включить, когда json будет собираться с ролями
             .then(() => location.reload())
     }
@@ -117,9 +119,12 @@ postsList.addEventListener('click', (e) => {
         const parent = e.target.parentElement;
         let usernameElement = parent.querySelector('.card-username').textContent;
         let emailElement = parent.querySelector('.card-email').textContent;
+        console.log(usernameValue);
+        console.log(usernameElement);
 
         usernameValue.value = usernameElement;
         emailValue.value = emailElement;
+        console.log(usernameValue.value);
     }
 
     // реализация редактирования ч2 - здесь отправка запроса
@@ -138,10 +143,8 @@ postsList.addEventListener('click', (e) => {
                 roles: whatSelected()
             })
         })
-            // .then(res => res.json())
-            // .then(data => console.log(data))
             .then(() => location.reload())
-        console.log(id);
-        console.log(whatSelected());
+        // console.log(id);
+        // console.log(whatSelected());
     })
 });

@@ -12,7 +12,6 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
     <link href="/css/main.css" rel="stylesheet"/>
-    <script src="/js/main.js"></script>
 
     <title>Admin panel</title>
 </head>
@@ -20,7 +19,7 @@
 <body>
 <!-- Навбар -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <span class="navbar-brand" th:text="${principal.getEmail()} + ' with roles:'">
+            <span class="navbar-brand principal-id" th:text="${principal.getEmail()} + ' with roles:'" th:id="${principal.getId()}">
                 Principal email</span>
     <span class="navbar-brand"
           th:each="role : ${principal.getRoles()}" th:text="${role.getName().substring(5)}">
@@ -40,15 +39,14 @@
 
 
 <!-- Modal Edit user-->
-<!--<form class="myForm" th:method="PATCH" th:action="@{/admin/edit}" th:object="${user}">-->
-<form class="myForm">
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<form class="editForm">
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
      aria-hidden="true">
 
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edit user</h5>
+                    <h5 class="modal-title" id="editModalLabel">Edit user</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -56,31 +54,6 @@
                 <div class="modal-body">
 
                     <!-- Здесь было начало формы -->
-<!--                    <p>-->
-<!--                        <label for="id_edit">Id:</label>-->
-<!--                        <input type="text" id="id_edit" class="form-control" th:field="*{id}" readonly/>-->
-<!--                    </p>-->
-<!--                    <p>-->
-<!--                        <label for="username_edit">Enter username:</label>-->
-<!--                        <input type="text" id="username_edit" class="form-control" th:field="*{username}"/>-->
-<!--                    </p>-->
-<!--                    <p>-->
-<!--                        <label for="password_edit">Enter password:</label>-->
-<!--                        <input type="password" id="password_edit" class="form-control" th:field="*{password}"/>-->
-<!--                    </p>-->
-<!--                    <p>-->
-<!--                        <label for="email_edit">Enter email:</label>-->
-<!--                        <input type="text" id="email_edit" class="form-control" th:field="*{email}"/>-->
-<!--                    </p>-->
-<!--                    <p>-->
-<!--                        <label for="role_edit">Enter role:</label>-->
-<!--                        <select multiple size="2" id="role_edit" class="form-control" th:field="*{roles}">-->
-<!--                            <option th:each="role : ${_roles}"-->
-<!--                                    th:text="${role.getName().substring(5)}"-->
-<!--                                    th:value="${role.getId()}"></option>-->
-<!--                        </select>-->
-<!--                    </p>-->
-
                     <p>
                         <label for="id_edit">Id:</label>
                         <input type="text" id="id_edit" class="form-control" name="id" readonly/>
@@ -98,18 +71,17 @@
                         <input type="text" id="email_edit" class="form-control" name="email"/>
                     </p>
                     <p>
-<!--                        <label for="role_edit">Enter role:</label>-->
-<!--                        <select multiple size="2" id="role_edit" class="form-control" name="roles">-->
-<!--                            <option th:each="role : ${_roles}"-->
-<!--                                    th:text="${role.getName().substring(5)}"-->
-<!--                                    th:value="${role.getId()}"></option>-->
-<!--                        </select>-->
+                        <label for="rolesValue">Choose roles:</label>
+                        <select class="form-control" multiple size="2" id="roles_edit">
+                            <option value="1" name="ROLE_ADMIN">ADMIN</option>
+                            <option value="2" name="ROLE_USER">USER</option>
+                        </select>
                     </p>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-primary" value="Save changes"/>
+                    <input type="submit" class="btn btn-primary save-changes" value="Save changes"/>
                 </div>
             </div>
         </div>
@@ -118,7 +90,6 @@
 <!-- / Modal Edit user-->
 
 <!-- Modal Delete user-->
-<!--<form class="deleteForm" th:method="DELETE" th:action="@{/admin/delete}" th:object="${user}">-->
 <form class="deleteForm">
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
          aria-hidden="true">
@@ -134,48 +105,24 @@
                 <div class="modal-body">
 
                     <!-- Здесь было начало формы -->
-<!--                    <p>-->
-<!--                        <label for="id_delete">Id:</label>-->
-<!--                        <input type="text" id="id_delete" class="form-control" th:field="*{id}" readonly/>-->
-<!--                    </p>-->
-<!--                    <p>-->
-<!--                        <label for="username_delete">Username:</label>-->
-<!--                        <input type="text" id="username_delete" class="form-control" th:field="*{username}" readonly/>-->
-<!--                    </p>-->
-<!--                    <p>-->
-<!--                        <label for="email_delete">Email:</label>-->
-<!--                        <input type="text" id="email_delete" class="form-control" th:field="*{email}" readonly/>-->
-<!--                    </p>-->
-<!--                    <p>-->
-<!--                        <label for="role_delete">Roles:</label>-->
-<!--                        <select multiple size="2" id="role_delete" class="form-control" th:field="*{roles}" readonly>-->
-<!--                            <option th:each="role : ${_roles}"-->
-<!--                                    th:text="${role.name.substring(5)}"-->
-<!--                                    th:value="${role.id}">-->
-<!--                            </option>-->
-<!--                        </select>-->
-<!--                    </p>-->
-
                     <p>
                         <label for="id_delete">Id:</label>
-                        <input type="text" id="id_delete" class="form-control" name="id" readonly/>
+                        <input type="text" id="id_delete" class="form-control" name="id" disabled/>
                     </p>
                     <p>
                         <label for="username_delete">Username:</label>
-                        <input type="text" id="username_delete" class="form-control" name="username" readonly/>
+                        <input type="text" id="username_delete" class="form-control" name="username" disabled/>
                     </p>
                     <p>
                         <label for="email_delete">Email:</label>
-                        <input type="text" id="email_delete" class="form-control" name="email" readonly/>
+                        <input type="text" id="email_delete" class="form-control" name="email" disabled/>
                     </p>
                     <p>
-<!--                        <label for="role_delete">Roles:</label>-->
-<!--                        <select multiple size="2" id="role_delete" class="form-control" name="roles" readonly>-->
-<!--                            <option th:each="role : ${_roles}"-->
-<!--                                    th:text="${role.name.substring(5)}"-->
-<!--                                    th:value="${role.id}">-->
-<!--                            </option>-->
-<!--                        </select>-->
+                        <label for="rolesValue">Roles:</label>
+                        <select class="form-control" multiple size="2" disabled>
+                            <option value="1" name="ROLE_ADMIN">ADMIN</option>
+                            <option value="2" name="ROLE_USER">USER</option>
+                        </select>
                     </p>
 
                 </div>
@@ -211,7 +158,7 @@
                 <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
                      aria-labelledby="v-pills-home-tab">
 
-                    <h1>Test Admin panel</h1>
+                    <h1>Admin panel</h1>
 
                     <nav>
                         <!-- Горизонтальные закладки: Users table | New user -->
@@ -234,7 +181,7 @@
                                 <h5 class="card-header">All users</h5>
                                 <div class="card-body">
 
-                                    <!-- Таблица fetch-->
+                                    <!-- Таблица админа -->
                                     <table class="table table-striped usersTable">
                                         <thead>
                                         <tr>
@@ -247,11 +194,10 @@
                                         </tr>
                                         </thead>
                                         <tbody id="data">
+                                        <!-- / Сюда выводит fetch-->
                                         </tbody>
                                     </table>
-                                    <script src="/js/table.js"></script>
-                                    <!-- / Таблица fetch-->
-
+                                    <!-- / Таблица админа -->
 
                                 </div>
                             </div>
@@ -268,90 +214,29 @@
 
                                     <!-- Форма добавления нового пользователя -->
                                     <div class="row h-100 justify-content-center align-items-center">
-                                        <form th:method="POST" th:action="@{/admin}" th:object="${user}" class="col-4 crForm">
+                                        <form class="col-4 add-user-form">
                                             <div class="form-group">
-                                                <label for="username">Enter username:</label>
-                                                <input th:field="*{username}" id="username" type="text"
-                                                       class="form-control" placeholder="Username"/>
+                                                <label for="usernameValue">Username:</label>
+                                                <input type="text" class="form-control" id="usernameValue" placeholder="Enter Username">
                                             </div>
                                             <div class="form-group">
-                                                <label for="email">Enter email:</label>
-                                                <input th:field="*{email}" id="email" type="text" class="form-control"
-                                                       placeholder="Email"/>
+                                                <label for="emailValue">Email:</label>
+                                                <input type="text" class="form-control" id="emailValue" placeholder="Enter email">
                                             </div>
                                             <div class="form-group">
-                                                <label for="password">Enter password:</label>
-                                                <input th:field="*{password}" id="password" type="text"
-                                                       class="form-control" placeholder="Password"/>
+                                                <label for="passwordValue">Password:</label>
+                                                <input type="password" class="form-control" id="passwordValue" placeholder="Enter password">
                                             </div>
                                             <div class="form-group">
-                                                <label for="role">Enter role:</label>
-                                                <select multiple size="2" id="role" class="form-control"
-                                                        th:field="*{roles}">
-                                                    <option th:each="role : ${_roles}"
-                                                            th:text="${role.name.substring(5)}"
-                                                            th:value="${role.id}"></option>
+                                                <label for="rolesValue">Roles:</label>
+                                                <select class="form-control" multiple size="2" id="rolesValue">
+                                                    <option value="1" name="ROLE_ADMIN" id="ROLE_ADMIN">ADMIN</option>
+                                                    <option value="2" name="ROLE_USER" id="ROLE_USER">USER</option>
                                                 </select>
                                             </div>
                                             <button type="submit" class="btn btn-success btn-block crBtn">
                                                 Create new user
                                             </button>
-
-                                            <script>
-                                                $(document).delegate('.crBtn', 'click', function(event) {
-                                                    event.preventDefault();
-
-                                                    var usernameVal = $('input#username').val();
-                                                    var passwordVal = $('input#password').val();
-                                                    var emailVal = $('input#email').val();
-                                                    var roleVal = $('select#role').val();
-
-                                                    // var ele = "[";
-                                                    // for (var i = 0; i < roleVal.length; i++) {
-                                                    //     // POPULATE SELECT ELEMENT WITH JSON.
-                                                    //     ele += roleVal[i] + ' : ' + 'name:' + 'ROLE_USER';
-                                                    // }
-                                                    // ele += "]"
-
-
-                                                    $.ajax({
-                                                        type: "POST",
-                                                        contentType: "application/json; charset=utf-8",
-                                                        url: "http://localhost:8080/api/users",
-                                                        async: true,
-                                                        data: JSON.stringify({
-                                                            'username': usernameVal,
-                                                            'password': passwordVal,
-                                                            'email': emailVal,
-                                                            'roles': roleVal
-                                                            // 'roles': [
-                                                            //     {
-                                                            //         "id": 1,
-                                                            //         "name": "ROLE_ADMIN"
-                                                            //     }
-                                                            // ]
-
-                                                        }),
-
-                                                        cache: false,
-                                                        success: function(result) {
-                                                            // $("#msg").html( "<span style='color: green'>Company added successfully</span>" );
-                                                            console.log(this.data);
-                                                            $('.crForm')[0].reset();
-                                                            // $('#v-pills-home').click(function() {
-                                                            //     location.reload();
-                                                            // });
-                                                            // window.setTimeout(function(){location.reload()},1000)
-                                                        },
-                                                        error: function(err) {
-                                                            // $("#msg").html( "<span style='color: red'>Name is required</span>" );
-                                                            // alert('danger' + "\n" + this.data);
-                                                            console.log(this.data);
-                                                            alert(Array.isArray(roleVal));
-                                                        }
-                                                    });
-                                                });
-                                            </script>
 
                                         </form>
                                     </div>
@@ -376,7 +261,7 @@
                         <h5 class="card-header">About user</h5>
                         <div class="card-body">
 
-                            <!-- Таблица -->
+                            <!-- Таблица принципала-->
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
@@ -385,24 +270,10 @@
                                     <th>Password</th>
                                     <th>Email</th>
                                     <th>Role</th>
-<!--                                    <th>Operations</th>-->
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <td th:text="${principal.getId()}"></td>
-                                    <td><a th:href="@{/admin/{id}(id=${principal.getId()})}"
-                                           th:text="${principal.getUsername()}"></a></td>
-                                    <td th:text="${principal.getPassword()}"></td>
-                                    <td th:text="${principal.getEmail()}"></td>
-                                    <td>
-                                        <span style="display: inline"
-                                              th:each="role: ${principal.getRoles()}"
-                                              th:text="${role.getName().substring(5)} + ' '">
-
-                                        </span>
-                                    </td>
-                                </tr>
+                                <tbody id="data-principal">
+                                    <!-- Строки рисует fetch -->
                                 </tbody>
                             </table>
                             <!-- / Таблица -->
@@ -419,11 +290,13 @@
     </div>
 </div>
 <!-- JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<!--    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"-->
-<!--            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"-->
-<!--            crossorigin="anonymous"></script>-->
-
+<!--<script src="/js/learn_fetch_api.js"></script>-->
+<script src="/js/fill_modals.js"></script>
+<script src="/js/table_admin.js"></script>
+<script src="/js/table_principal.js"></script>
+<script src="/js/new_user.js"></script>
+<script src="/js/delete_user.js"></script>
+<script src="/js/edit_user.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
