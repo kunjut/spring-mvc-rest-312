@@ -72,9 +72,10 @@
                     </p>
                     <p>
                         <label for="rolesValue">Choose roles:</label>
-                        <select class="form-control" multiple size="2" id="roles_edit">
-                            <option value="1" name="ROLE_ADMIN">ADMIN</option>
-                            <option value="2" name="ROLE_USER">USER</option>
+                        <select multiple size="2" id="roles_edit" class="form-control">
+                            <option th:each="role : ${roles}"
+                                    th:text="${role.getName().substring(5)}"
+                                    th:value="${role.getId()}"></option>
                         </select>
                     </p>
 
@@ -119,9 +120,10 @@
                     </p>
                     <p>
                         <label for="rolesValue">Roles:</label>
-                        <select class="form-control" multiple size="2" disabled>
-                            <option value="1" name="ROLE_ADMIN">ADMIN</option>
-                            <option value="2" name="ROLE_USER">USER</option>
+                        <select multiple size="2" class="form-control" disabled>
+                            <option th:each="role : ${roles}"
+                                    th:text="${role.getName().substring(5)}"
+                                    th:value="${role.getId()}"></option>
                         </select>
                     </p>
 
@@ -229,9 +231,10 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="rolesValue">Roles:</label>
-                                                <select class="form-control" multiple size="2" id="rolesValue">
-                                                    <option value="1" name="ROLE_ADMIN" id="ROLE_ADMIN">ADMIN</option>
-                                                    <option value="2" name="ROLE_USER" id="ROLE_USER">USER</option>
+                                                <select multiple size="2" class="form-control" id="rolesValue">
+                                                    <option th:each="role : ${roles}"
+                                                            th:text="${role.getName().substring(5)}"
+                                                            th:value="${role.getId()}"></option>
                                                 </select>
                                             </div>
                                             <button type="submit" class="btn btn-success btn-block crBtn">
